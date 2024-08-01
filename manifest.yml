@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: webwipe
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: webwipe-pv-claim
+  namespace: webwipe
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 200Mi
+  storageClassName: "longhorn"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: webwipe
+  name: webwipe
+  namespace: webwipe
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: webwipe
+  template:
+    metadata:
+      labels:
+        run: webwipe
+    spec:
+      containers:
+      - name: webwipe
+        image: registry.retake.fr/webwipe:latest
+        env:
+        - name: EXCLUDE
+          value: "/dev/sda,/dev/zram0"
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+        - name: webwipe-data
+          mountPath: /etc/nwipe/
+          subPath: webwipe
+        securityContext:
+          privileged: true
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "1000m"
+      nodeSelector:
+        kubernetes.io/hostname: NODE_WITH_DISKS
+      volumes:
+      - name: webwipe-data
+        persistentVolumeClaim:
+          claimName: webwipe-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webwipe-svc
+  namespace: webwipe
+spec:
+  selector:
+    run: webwipe
+  ports:
+  - name: http
+    port: 3000
+    targetPort: 3000
+  type: NodePort
