@@ -28,12 +28,14 @@ let terminalState = "";
 let ptyProcess;
 
 function startPtyProcess() {
+  console.log("Starting PTY process with args:", shellArgs);
   ptyProcess = pty.spawn(shell, shellArgs, {
     name: "xterm-color",
     env: process.env,
   });
 
   ptyProcess.on("data", (rawOutput) => {
+    console.log("PTY process data received:", rawOutput);
     const processedOutput = outputProcessor(rawOutput);
     terminalState += processedOutput;
     clients.forEach((client) => {
@@ -60,6 +62,7 @@ app.post('/restart', (req, res) => {
   if (ptyProcess) {
     ptyProcess.kill();
     ptyProcess.on('exit', () => {
+      console.log("PTY process killed, restarting now");
       startPtyProcess();
     });
   } else {
