@@ -31,7 +31,6 @@ WORKDIR /app
 
 COPY src/ /app/
 
-RUN ls -la public
 RUN npm install express socket.io @xterm/xterm ws node-pty
 
 EXPOSE 3000
