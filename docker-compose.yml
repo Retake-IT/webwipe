@@ -1,0 +1,18 @@
+services:
+  webwipe:
+    image: registry.retake.fr/webwipe:latest
+    container_name: webwipe
+    privileged: true
+    restart: always
+    volumes:
+      - ./config/:/etc/nwipe/
+    environment:
+      EXCLUDE: /dev/sda,/dev/zram0
+    ports:
+      - 3000:3000
+    healthcheck:
+      test: curl --fail http://localhost:3000 || exit 1
+      interval: 60s
+      retries: 5
+      start_period: 20s
+      timeout: 10s
