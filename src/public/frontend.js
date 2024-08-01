@@ -1,4 +1,7 @@
-const socket = new WebSocket("ws://localhost:3000");
+const host = window.location.host;
+const wsUrl = `ws//${host}/path-to-websocket-endpoint`;
+
+const socket = new WebSocket(wsUrl);
 
 var term = new Terminal({
   cursorBlink: false,
