@@ -6,6 +6,7 @@ services:
     restart: always
     volumes:
       - ./config/:/etc/nwipe/
+      - ./pdf:/public/pdf
     environment:
       EXCLUDE: /dev/sda,/dev/zram0
     ports:
