@@ -17,7 +17,7 @@ Try with:
 
 ```bash
 docker build -t webwipe .
-docker run -v /run/udev/:/run/udev/ --privileged -p 3000:3000 -e EXCLUDE="/dev/sda"
+docker run -v /run/udev/:/run/udev/ --privileged -p 3000:3000 -e EXCLUDE="/dev/sda" webwipe
 ```
 
 ## Roadmap
