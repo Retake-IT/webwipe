@@ -15,7 +15,7 @@ const server = app.listen(port, () => {
 const wss = new WebSocket.Server({ server });
 
 const shell = "/usr/local/bin/nwipe";
-const shellArgs = ["--PDFreportpath=public/pdf/"];
+const shellArgs = ["--PDFreportpath=public/pdf/"]; // Replace by an env var & set public/pdf/ by default
 
 const excludeEnv = process.env.EXCLUDE;
 
@@ -35,7 +35,7 @@ function startPtyProcess() {
   });
 
   ptyProcess.on("data", (rawOutput) => {
-    console.log("PTY process data received:", rawOutput);
+    // console.log("PTY process data received:", rawOutput); // need to find a way to format output
     const processedOutput = outputProcessor(rawOutput);
     terminalState += processedOutput;
     clients.forEach((client) => {
@@ -51,25 +51,17 @@ function startPtyProcess() {
 
   ptyProcess.on("exit", (code, signal) => {
     console.log(`Pty process exited with code ${code} and signal ${signal}`);
-    // Restart the process if it exits unexpectedly
-    startPtyProcess();
+    return;
   });
 }
 
 startPtyProcess();
 
 app.post('/restart', (req, res) => {
-  if (ptyProcess) {
-    ptyProcess.kill();
-    ptyProcess.on('exit', () => {
-      console.log("PTY process killed, restarting now");
-      startPtyProcess();
-    });
-  } else {
-    startPtyProcess();
-  }
-
-  res.send('Pty process has been restarted.');
+  console.log("restart");
+  // ptyProcess.kill();
+  startPtyProcess();
+  res.send("Restarting webwipe")
 });
 
 wss.on("connection", (ws) => {
