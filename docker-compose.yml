@@ -7,7 +7,7 @@ services:
     volumes:
       - ./config/:/etc/nwipe/
       - ./pdf:/public/pdf
-      - /run/udev/:/run/udev
+      - /dev:/dev
     environment:
       EXCLUDE: /dev/sda,/dev/zram0
     ports:

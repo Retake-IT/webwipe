@@ -17,7 +17,7 @@ Try with:
 
 ```bash
 docker build -t webwipe .
-docker run -v /run/udev/:/run/udev/ --privileged -p 3000:3000 -e EXCLUDE="/dev/sda" webwipe
+docker run -v /dev:/dev --privileged -p 3000:3000 -e EXCLUDE="/dev/sda,/dev/zram0" webwipe
 ```
 
 ## Roadmap
@@ -29,5 +29,5 @@ docker run -v /run/udev/:/run/udev/ --privileged -p 3000:3000 -e EXCLUDE="/dev/s
 - [x] Add a relaunch button
 - [ ] Add health endpoint
 - [ ] Improve logs
-- [ ] Find a way to refresh device list(no more udev volume)
+- [x] Find a way to refresh device list(no more udev volume)
 - [ ] Look for capadd to replace priviliged option
