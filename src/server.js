@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const WebSocket = require("ws");
 const pty = require("node-pty");
+const fs = require('fs');
 
 const app = express();
 const port = 3000;
@@ -56,6 +57,55 @@ function startPtyProcess() {
 }
 
 startPtyProcess();
+
+app.get('/pdfs', (req, res) => {
+  const pdfDirectory = path.join(__dirname, 'public', 'pdf');
+  
+  fs.readdir(pdfDirectory, (err, files) => {
+    if (err) {
+      console.error("Could not list the directory.", err);
+      res.status(500).send("Internal server error");
+      return;
+    }
+
+    const pdfFiles = files.filter(file => path.extname(file) === '.pdf');
+
+    let html = `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+          <title>Retake | WebWipe</title>
+          <link rel="stylesheet" href="/css/styles.css" />
+        </head>
+        <body>
+          <h1>Available PDFs</h1>
+          <ul>`;
+
+    pdfFiles.forEach(file => {
+      html += `<li><a href="/pdf/${file}" download>${file}</a></li>`;
+    });
+
+    html += `
+          </ul>
+        </body>
+      </html>`;
+
+    res.send(html);
+  });
+});
+
+app.get('/pdf/:filename', (req, res) => {
+  const file = path.join(__dirname, 'public', 'pdf', req.params.filename);
+  res.download(file, err => {
+    if (err) {
+      console.error("Error downloading the file:", err);
+      res.status(500).send("Internal server error");
+    }
+  });
+});
 
 app.post('/restart', (req, res) => {
   console.log("restart");
