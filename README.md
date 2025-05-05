@@ -1,6 +1,6 @@
 # Retake | WebWipe
 
-![WebWipe](https://retake.fr/wp-content/uploads/2024/06/RETAKE3.png)
+![WebWipe](https://github.com/Retake-IT/.github/raw/main/images/logo.png)
 
 ## Description
 
@@ -32,4 +32,3 @@ docker run -v /dev:/dev --privileged -p 3000:3000 -e EXCLUDE="/dev/sda,/dev/zram
 - [ ] Add health endpoint
 - [ ] Improve logs
 - [x] Find a way to refresh device list(no more udev volume)
-- [ ] Look for capadd to replace priviliged option
